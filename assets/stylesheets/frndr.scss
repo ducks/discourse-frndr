@@ -1,0 +1,83 @@
+.frndr-discover {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+
+  h1 {
+    margin-bottom: 2rem;
+  }
+}
+
+.frndr-matches {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.frndr-match-card {
+  border: 1px solid var(--primary-low);
+  border-radius: 8px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: box-shadow 0.2s;
+
+  &:hover {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+}
+
+.frndr-match-avatar {
+  margin-bottom: 1rem;
+}
+
+.frndr-match-info {
+  flex: 1;
+  margin-bottom: 1rem;
+
+  h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.25rem;
+  }
+}
+
+.frndr-match-name {
+  color: var(--primary-medium);
+  font-size: 0.9rem;
+  margin-bottom: 1rem;
+}
+
+.frndr-compatibility {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.frndr-compatibility-score {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--success);
+}
+
+.frndr-compatibility-label {
+  font-size: 0.9rem;
+  color: var(--primary-medium);
+}
+
+.frndr-match-actions {
+  width: 100%;
+
+  .btn {
+    width: 100%;
+  }
+}
+
+.frndr-no-matches {
+  text-align: center;
+  padding: 3rem;
+  color: var(--primary-medium);
+}
