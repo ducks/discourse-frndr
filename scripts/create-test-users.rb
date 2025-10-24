@@ -2,9 +2,7 @@
 # frozen_string_literal: true
 
 # Script to create test users with random profile answers for testing frndr matching
-# Run from discourse root: cd ~/discourse/discourse && ruby plugins/discourse-frndr/scripts/create-test-users.rb
-
-require_relative "../../../config/environment"
+# Run from discourse root: bin/rails runner plugins/discourse-frndr/scripts/create-test-users.rb
 
 module Frndr
   class TestUserGenerator
@@ -15,14 +13,15 @@ module Frndr
       Uma Victor Wanda Xavier Yara Zoe Amy Ben Clara David
     ]
 
-    def self.random_user_fields
+    def self.set_random_user_fields(user)
       user_field_ids = UserField.pluck(:id)
-      return {} if user_field_ids.empty?
+      return if user_field_ids.empty?
 
       # Generate random answers (1-3 scale)
-      user_field_ids.each_with_object({}) do |field_id, hash|
-        hash[field_id.to_s] = rand(1..3).to_s
+      user_field_ids.each do |field_id|
+        user.custom_fields["user_field_#{field_id}"] = rand(1..3).to_s
       end
+      user.save_custom_fields
     end
 
     def self.generate
@@ -36,8 +35,11 @@ module Frndr
         email = "#{username}@example.com"
 
         # Check if user already exists
-        if User.exists?(username: username)
-          puts "Skipping #{username} (already exists)"
+        existing_user = User.find_by(username: username)
+        if existing_user
+          set_random_user_fields(existing_user)
+          field_values = UserField.pluck(:id).map { |id| existing_user.custom_fields["user_field_#{id}"] }
+          puts "Updated #{username} with fields: #{field_values.inspect}"
           next
         end
 
@@ -47,18 +49,18 @@ module Frndr
               username: username,
               name: name,
               email: email,
-              password: "password123",
+              password: "TestPass123!@#",
               approved: true,
               active: true,
               trust_level: 1,
             )
 
           # Set random user field answers
-          user.user_fields = random_user_fields
-          user.save!
+          set_random_user_fields(user)
 
           created_count += 1
-          puts "Created #{username} (#{user.user_fields.inspect})"
+          field_values = UserField.pluck(:id).map { |id| user.custom_fields["user_field_#{id}"] }
+          puts "Created #{username} (fields: #{field_values.inspect})"
         rescue StandardError => e
           puts "Failed to create #{username}: #{e.message}"
         end
@@ -66,6 +68,7 @@ module Frndr
 
       puts
       puts "Created #{created_count} test users"
+      puts "Password for all users: TestPass123!@#"
       puts
       puts "Next steps:"
       puts "1. Visit /discover as any user to see matches"
