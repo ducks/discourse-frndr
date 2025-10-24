@@ -2,6 +2,7 @@
 
 module Frndr
   class DiscoverController < ::ApplicationController
+    requires_plugin Frndr::PLUGIN_NAME
     requires_login
 
     def index
